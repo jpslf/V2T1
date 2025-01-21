@@ -2,26 +2,46 @@ package main;
 
 import java.util.Scanner;
 
+
+
 /**
 * Hello world!
 */
 public class App {
-	static void NaytaAutonTila() {
-		System.out.println("Näytä auton tila");
+	static String ask(Scanner in, String promt) {
+		System.out.print(promt);
+
+		return in.next();
 	}
 
-	static void MuokkaaAutonMerkkiaJaMallia() {
-		System.out.println("Muokkaa auton merkkiä ja mallia");
+	static void NaytaAutonTila(Car auto) {
+		System.out.println(String.format("Auto: %s %s, Nopeus: %d km/h", auto.brand, auto.model, auto.get_speed()));
 	}
 
-	static void KiihdytaAutoa() {
-		System.out.println("Kiihdytä autoa");
+	static void MuokkaaAutonMerkkiaJaMallia(Scanner in, Car auto) {
+		auto.brand = ask(in, "Anna uusi auton merkki: ");
+		auto.model = ask(in, "Anna uusi auton malli: ");
 	}
 
-	static void HidastaAutoa() {
-		System.out.println("Hidasta autoa");
+	static void KiihdytaAutoa(Scanner in, Car auto) {
+		int delta = Integer.parseInt(ask(in, "Kuinka monta km/h haluat kiihdyttää? "));
+
+		try {
+			auto.accelerate(delta);
+		} catch (IllegalArgumentException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
+	static void HidastaAutoa(Scanner in, Car auto) {
+		int delta = Integer.parseInt(ask(in, "Kuinka monta km/h haluat hidastaa? "));
+
+		try {
+			auto.deaccel(delta);
+		} catch (IllegalArgumentException e) {
+			System.out.println(e.getMessage());
+		}
+	}
 
 	static int get_selection(Scanner in) {
 		System.out.println("1) Näytä auton tila");
@@ -38,6 +58,11 @@ public class App {
 		Scanner in = new Scanner(System.in);
 		int selection = -1;
 
+		Car auto = new Car();
+
+		auto.brand = ask(in, "Anna auton merkki: ");
+		auto.model = ask(in, "Anna auton malli: ");
+
 		while (selection != 0) {
 			selection = App.get_selection(in);
 
@@ -45,23 +70,25 @@ public class App {
 				// pass
 
 			} else if (selection == 1) {
-				NaytaAutonTila();
+				NaytaAutonTila(auto);
 
 			}else if (selection == 2) {
-				MuokkaaAutonMerkkiaJaMallia();
+				MuokkaaAutonMerkkiaJaMallia(in, auto);
 
 			}else if (selection == 3) {
-				KiihdytaAutoa();
+				KiihdytaAutoa(in, auto);
 
 			}else if (selection == 4) {
-				HidastaAutoa();
+				HidastaAutoa(in, auto);
 
 			} else {
-				System.out.println("Tuntematon valinta, yritä uudestaan.");
+				System.out.println("Syöte oli väärä");
 
 			}
 		}
 
 		System.out.println("Kiitos ohjelman käytöstä.");
+
+		in.close();
 	}
 }
